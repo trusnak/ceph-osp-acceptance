@@ -1,0 +1,9 @@
+---
+# task deleting cinder backup
+
+- name: cinder | delete backup
+  command: cinder backup-delete {{ backup }}
+  environment: "{{ keystone_env }}"
+  register: res
+- debug: var=res.stdout_lines
+- debug: var=res.stderr

@@ -1,0 +1,8 @@
+---
+# task getting info about existing RBD objects in pool
+
+- name: RBD object info
+  command: rbd -p {{ rbd_pool }} info {{ rbd_image_name }}
+  register: res
+- debug: var=res.stdout_lines
+- debug: var=res.stderr

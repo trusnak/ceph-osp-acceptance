@@ -1,0 +1,6 @@
+ ---
+# glance image create command wrapper tasks
+
+- name: nova | boot VM
+  command: nova boot --flavor {{ instance.flavor }} --nic net-id={{ instance_net }} --image {{ instance.image }} --key-name {{ instance.key }} {{ instance.name }}
+  environment: "{{ keystone_env }}"

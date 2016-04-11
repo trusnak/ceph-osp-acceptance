@@ -1,0 +1,9 @@
+---
+# task deleting glance image
+
+- name: glance | deleting image
+  command: glance image-delete {{ image.name }}
+  environment: "{{ keystone_env }}"
+  register: res
+- debug: var=res.stdout_lines
+- debug: var=res.stderr

@@ -1,0 +1,15 @@
+---
+# glance image create command wrapper tasks
+
+- name: glance | local image check
+  stat: path={{ image.file }}
+  register: imgfile
+
+- name: glance | download image
+  get_url: url={{ image.url }} dest={{ image.file }}
+  when: imgfile.stat.exists is not defined
+
+
+- name: glance | image create
+  command: glance image-create --container-format {{ image.container }} --disk-format {{ image.format }} --name {{ image.name }} --file {{ image.file }}
+  environment: "{{ keystone_env }}"

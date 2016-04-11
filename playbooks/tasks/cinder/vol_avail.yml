@@ -1,0 +1,10 @@
+---
+# task waiting for cinder volume became available
+
+- name: cinder list volume
+  script: ../tasks/cinder/vol_status.sh {{ volume.name }}
+  environment: "{{ keystone_env }}"
+  register: res
+  until: res.stdout.find("available") > -1
+  retries: 10
+  delay: 30

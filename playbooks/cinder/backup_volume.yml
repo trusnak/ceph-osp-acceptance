@@ -1,0 +1,28 @@
+---
+# CASE: 4.1.6 Backup a Volume
+
+- name: ceph integration | backup volume
+  hosts: controller
+
+  vars:
+    cinder:
+      volumes:
+        - { name: "vol_test_4_1_6", size: 1 }
+      backups:
+        - { name: "vol_test_4_1_6_backup", volume: "vol_test_4_1_6" }
+
+  tasks:
+    # create cinder image as it is defined in vars
+    - include: ../tasks/cinder/create.yml
+    - include: ../tasks/cinder/vol_avail.yml volume={{ cinder.volumes[0].name }}
+    - include: ../tasks/cinder/list.yml cinder_vol_name={{ cinder.volumes[0].name }}
+    # create backup from volume
+    - include: ../tasks/cinder/bkp_create.yml
+    - include: ../tasks/cinder/bkp_avail.yml backup={{ cinder.backups[0].name }}
+    # RBD check if backup was created
+
+    # cleanup
+    - include: ../tasks/cinder/bkp_delete.yml backup={{ item.name }}
+      with_items: "{{ cinder.backups }}"
+    - include: ../tasks/cinder/delete.yml volume={{ item.name }}
+      with_items: "{{ cinder.volumes }}"

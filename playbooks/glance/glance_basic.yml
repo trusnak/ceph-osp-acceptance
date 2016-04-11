@@ -1,0 +1,40 @@
+---
+# CASE: 4.2 Glance acceptance tests with CEPH
+
+- name: ceph integration | glance
+  hosts: controller
+
+  vars:
+    glance:
+      images:
+        - { image_url: "http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img",
+            format: "qcow2",
+            container: "bare",
+            name: "cirros_test_4_2_1",
+            file: "cirros-0.3.4-x86_64-disk.img",
+            md5: "ee1eca47dc88f4879d8a229cc70a07c6"
+          } 
+    instances:
+      - { flavor: "",
+          net: "",
+          image: "",
+          key: "",
+          name: "test_instance_4_2_1"
+      }       
+
+  tasks:
+    # create glance image as it is defined in vars
+    - include: ../tasks/glance/img_create.yml image={{ glance.images[0] }}
+    - include: ../tasks/glance/img_status.yml image={{ glance.images[0] }}
+    
+    # download image from glance and check it's MD5
+    - include: ../tasks/glance/img_download.yml image={{ glance.images[0] }}
+    - name: glance | check MD5
+      debug: var=md5sum
+      when: md5sum == glance.images[0].md5
+
+    # manual checking
+    - pause: minutes=2
+
+    # cleanup
+    - include: ../tasks/glance/img_delete.yml  image={{ glance.images[0] }}

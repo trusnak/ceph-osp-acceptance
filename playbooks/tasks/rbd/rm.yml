@@ -1,0 +1,8 @@
+---
+# task removing RBD image
+
+- name: remove RBD image
+  command: rbd rm {{ rbd_image_name }}
+  register: res
+- debug: var=res.stdout_lines
+- debug: var=res.stderr

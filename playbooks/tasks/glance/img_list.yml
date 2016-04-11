@@ -1,0 +1,9 @@
+# task getting image ID from glance
+
+- name: glance | list image
+  script: ../tasks/glance/img_id.sh {{ image }}
+  environment: "{{ keystone_env }}"
+  register: res
+- set_fact: img_ids={{ res.stdout_lines }}
+- debug: var=res.stdout_lines
+- debug: var=res.stderr

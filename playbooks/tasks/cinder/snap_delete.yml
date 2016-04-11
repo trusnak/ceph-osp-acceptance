@@ -1,0 +1,9 @@
+---
+# task deleting cinder snapshot
+
+- name: cinder | deleting snapshot
+  command: cinder snapshot-delete {{ snapshot.name }}
+  environment: "{{ keystone_env }}"
+  register: res
+- debug: var=res.stdout_lines
+- debug: var=res.stderr

@@ -1,0 +1,20 @@
+---
+# cinder create commands wrapper tasks
+
+- name: cinder create simple volume
+  command: cinder create --display-name  {{ volume.name }} {{ volume.size }}
+  environment: "{{ keystone_env }}"
+  when: cinder.volumes is defined
+- name: cinder create simple volume
+  command: cinder create --display-name  {{ volume.name }} {{ volume.size }}
+  environment: "{{ keystone_env }}"
+  when: cinder.volumes is defined
+
+- name: cinder create volume from image
+  command: cinder create --display-name  {{ volume.name }} --image-id {{ volume.id }} --availability-zone {{ volume.zone }}
+  environment: "{{ keystone_env }}"
+  when: cinder.volume_from_image is defined 
+
+
+
+

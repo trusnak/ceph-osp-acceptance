@@ -1,0 +1,8 @@
+---
+# cinder backup-create commands wrapper tasks
+
+- name: cinder | backup-create
+  command: cinder backup-create --display-name {{ item.name }} {{ item.volume }}
+  environment: "{{ keystone_env }}"
+  with_items: "{{ cinder.backups }}"
+  when: cinder.backups is defined 

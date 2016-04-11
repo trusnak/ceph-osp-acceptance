@@ -1,0 +1,10 @@
+---
+# task waiting for glance image became active
+
+- name: glance | wait for image to be active
+  script: ../tasks/glance/img_status.sh {{ image.name }}
+  environment: "{{ keystone_env }}"
+  register: res
+  until: res.stdout.find("active") > -1
+  retries: 10
+  delay: 30

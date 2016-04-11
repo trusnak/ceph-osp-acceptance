@@ -1,0 +1,10 @@
+---
+# task waiting for cinder backup became available
+
+- name: cinder | check backup is available
+  script: ../tasks/cinder/bkp_status.sh {{ backup }}
+  environment: "{{ keystone_env }}"
+  register: res
+  until: res.stdout.find("available") > -1
+  retries: 10
+  delay: 30

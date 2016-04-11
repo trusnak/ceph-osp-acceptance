@@ -1,0 +1,22 @@
+- name: ceph integration | cinder
+  hosts: controller
+
+  vars:
+    cinder:
+      volumes:
+        - { name: "vol_test_4_2", size: 5 }
+        - { name: "vol_test_4_3", size: 5 }
+
+  tasks:
+    - include: ../tasks/cinder/create.yml image={{ item }}
+      with_items: "{{ cinder.volumes }}"
+
+    # cleanup
+    - include: ../tasks/cinder/delete.yml image={{ item }}
+      with_item: "{{ cinder.volumes }}"
+
+- name: next host play
+  hosts: ceph
+
+  var: 
+  tasks:

@@ -1,0 +1,17 @@
+---
+- name: ceph integration 
+  hosts: controller
+
+  # setting environment variable 
+  tasks:
+    - name: setting environment
+      set_fact: 
+        keystone_env:
+          OS_USERNAME: admin
+          OS_PASSWORD: cc7f884fbb7f46b1
+          OS_AUTH_URL: http://192.168.122.10:5000/v2.0
+          OS_TENANT_NAME: admin
+          OS_REGION_NAME: RegionOne
+
+- include: cinder/cinder_basic.yml
+- include: glance/glance_basic.yml

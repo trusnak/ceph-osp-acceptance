@@ -1,0 +1,10 @@
+---
+# task waiting for cinder snapshot became available
+
+- name: cinder | wait for snapshot to be available
+  script: ../tasks/cinder/snap_status.sh {{ snapshot.name }}
+  environment: "{{ keystone_env }}"
+  register: res
+  until: res.stdout.find("available") > -1
+  retries: 10
+  delay: 30

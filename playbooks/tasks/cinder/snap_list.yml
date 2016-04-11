@@ -1,0 +1,9 @@
+# task getting info about cinder snapshot
+
+- name: cinder | list snapshot
+  script: ../tasks/cinder/snap_list.sh {{ cinder_snap_name }}
+  environment: "{{ keystone_env }}"
+  register: res
+- set_fact: snap_ids={{ res.stdout_lines }}
+- debug: var=res.stdout_lines
+- debug: var=res.stderr

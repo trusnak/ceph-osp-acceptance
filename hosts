@@ -1,0 +1,9 @@
+[controller]
+controller:5000
+
+[compute]
+controller:5000
+
+[ceph]
+ceph1:5001
+

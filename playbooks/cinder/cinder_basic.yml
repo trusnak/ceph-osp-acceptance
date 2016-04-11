@@ -1,0 +1,62 @@
+---
+# CASE: 4.1 Cinder acceptance tests with CEPH
+
+- name: ceph integration | cinder
+  hosts: controller
+
+  vars:
+    cinder:
+      volumes:
+        - { name: "vol_test_4_1", size: 1, rbd_size: 1024 }
+      backups:
+        - { name: "vol_test_4_1_backup", volume: "vol_test_4_1" }
+      snapshots:
+        - { name: "vol_test_snap_4_1_first", volume: "vol_test_4_1" }
+        - { name: "vol_test_snap_4_1_second", volume: "vol_test_4_1" }
+
+  tasks:
+    # create cinder image as it is defined in vars
+    - include: ../tasks/cinder/create.yml volume={{ cinder.volumes[0] }}
+    - include: ../tasks/cinder/vol_avail.yml volume={{ cinder.volumes[0] }}
+    - include: ../tasks/cinder/list.yml volume={{ cinder.volumes[0] }}
+
+    # check RBD
+    - name: get object IDs from pool
+      command: rbd --pool volumes ls
+      register: res
+    - debug: var=res.stdout_lines
+    - set_fact: rbd_objects={{ res.stdout_lines }}
+
+    - name: check volumes was created in RBD
+      include: ../tasks/rbd/info.yml rbd_pool=volumes rbd_image_name={{ item }}
+      with_items: "{{ rbd_objects }}"
+
+    - name: check volume size in RBD
+      include: ../tasks/rbd/size.yml size={{ cinder.volumes[0].rbd_size }}
+    
+    # validate data
+    - name: check volumes data
+      shell: echo {{ item[0] }} matched
+      when: "('volume + $item[0]') == '$item[1]'"
+      with_nested: 
+        - "{{ volume_ids | sort }}"
+        - "{{ rbd_objects | sort }}"
+
+    - debug: var=volume_ids
+
+    # TODO: what if we have more with same name ??? (it will end up with error now)
+    - include: ../tasks/cinder/snap_create.yml snapshot={{ item }}
+      with_items: "{{ cinder.snapshots }}"
+    # wait for snapshots to be available
+    - include: ../tasks/cinder/snap_avail.yml snapshot={{ item }}
+      with_items: "{{ cinder.snapshots }}"
+
+    # check with RBD
+    #rbd -p volumes snap ls volume-c23f1987-8442-4ec0-b8ec-9b46c5f6cdf0
+    
+    # cleanup
+    - include: ../tasks/cinder/snap_delete.yml snapshot={{ item }}
+      with_items: "{{ cinder.snapshots }}"
+
+    - include: ../tasks/cinder/delete.yml volume={{ item }}
+      with_items: "{{ cinder.volumes }}"

@@ -1,0 +1,9 @@
+---
+# task deleting cinder volume
+
+- name: cinder | delete volume
+  command: cinder delete {{ volume }}
+  environment: "{{ keystone_env }}"
+  register: res
+- debug: var=res.stdout_lines
+- debug: var=res.stderr

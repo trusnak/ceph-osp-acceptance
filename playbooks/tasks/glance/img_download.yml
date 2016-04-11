@@ -1,0 +1,12 @@
+---
+# task downloading glance image
+
+- name: glance | download image
+  command: glance image-download {{ image.name }} --file download-image.raw
+  environment: "{{ keystone_env }}"
+  
+- name: glance | get MD5 from downloaded file
+  command: bash -c "md5sum download-image.raw | awk '{ print $1}'"
+  register: res
+
+- set_fact: md5sum={{ res.stdout_lines[0] }}

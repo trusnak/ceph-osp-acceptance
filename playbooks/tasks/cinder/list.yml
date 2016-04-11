@@ -1,0 +1,10 @@
+---
+# task getting info about cinder volumes
+
+- name: cinder list volume
+  script: ../tasks/cinder/list.sh {{ volume.name }}
+  environment: "{{ keystone_env }}"
+  register: res
+- set_fact: volume_ids={{ res.stdout_lines }}
+- debug: var=res.stdout_lines
+- debug: var=res.stderr
