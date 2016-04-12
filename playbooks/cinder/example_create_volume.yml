@@ -8,10 +8,11 @@
         volumes:
           - { name: "vol_test", size: 1 }
           - { name: "vol_test2", size: 1 }
-        #from_image: 
-        #  - "vol_test3": 
-        #    id: 397e713c-b95b-4186-ad46-6126863ea0a9" 
-        #    zone: "nova"
+        from_image: 
+          - { name: "vol_test3",
+              id: 397e713c-b95b-4186-ad46-6126863ea0a9",
+              zone: "nova"
+            }
 
 
   tasks:  
